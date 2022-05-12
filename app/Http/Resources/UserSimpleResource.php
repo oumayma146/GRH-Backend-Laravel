@@ -28,6 +28,7 @@ class UserSimpleResource extends JsonResource
            "langues"=>$this->langues,
            "posts"=>$this->posts,
            "education"=>$this->education,
+           "password"=>$this->password,
           /*  "role" => $this->getRoleNames(),
            "permissions" => $this->getPermissionsViaRoles()->pluck("name"), */
         ];

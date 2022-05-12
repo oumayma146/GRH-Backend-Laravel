@@ -12,6 +12,8 @@ use App\Http\Controllers\AnnonceController;
 use App\Http\Controllers\FormateurController;
 use App\Http\Controllers\CompetanceController;
 use App\Http\Controllers\LangueController;
+use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\PDFController;
 
 
 
@@ -88,3 +90,9 @@ Route::group(['prefix' => 'competance' ,'middleware'=>'auth:sanctum' ], function
     Route::post('/create', [CompetanceController::class, 'store']);
     Route::delete('/{id}', [CompetanceController::class, 'destroy']);
 });
+Route::group(['prefix' => 'permission' ,'middleware'=>'auth:sanctum' ], function () {
+    Route::get('/',       [PermissionController::class, 'get']);
+    Route::post('/create', [PermissionController::class, 'create']);
+    Route::delete('/{id}', [PermissionController::class, 'destroy']);
+});
+Route::get('generate-pdf', [PDFController::class, 'generatePDF']);

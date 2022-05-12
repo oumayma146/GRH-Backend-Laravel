@@ -39,9 +39,10 @@ class AnnonceController extends Controller
         ]);
     
         try{
-            $imageName = Str::random().'.'.$request->affiche->getClientOriginalExtension();
-            Storage::disk('public')->putFileAs('annonce/image', $request->affiche,$imageName);
-            $annonce= Annonce::create($request->post()+['affiche'=>$imageName]);
+            $image_file=$request->affiche;
+            $imageName = time().'_'.$image_file->getClientOriginalName();
+            Storage::disk('public')->putFileAs('annonce/image/', $image_file,$imageName);
+            $annonce= Annonce::create($request->post()+['affiche'=>'annonce/image/'.$imageName]);
             $typeAnnonce = json_decode($request->get('typeAnnonce'),true);
         
             foreach($typeAnnonce as $type)
@@ -58,30 +59,6 @@ class AnnonceController extends Controller
             ],500);
         }
 
-       /* if ($request->hasFile('affiche')) {
-            $file= $request->file('affiche');
-            $extention =$file->getClientOriginalExtention();
-            $filename= time().'.'.$extention;
-            $distination= public_path('public/Image');
-            $file -> move($distination,$filename) ;
-            $annonce = Annonce::create([
-                'titre' => $request->titre,
-                'resume' => $request->resume,
-                'date' => $request->date,
-                'affiche' => $request->$file,
-                
-             ]);
-        $typeAnnonce = json_decode($request->get('typeAnnonce'),true);
-        
-        foreach($typeAnnonce as $type)
-        $annonce->typeAnnonce()->attach([$type]);
-      
-       // $annonce->save(); // Finally, save the record.
-}
-return (new AnnonceResource($annonce))
-      ->response()
-       ->setStatusCode(Response::HTTP_CREATED);
- */
     } 
 
     /**
@@ -118,14 +95,14 @@ return (new AnnonceResource($annonce))
 
             // remove old image
             if($annonce->affiche){
-                $exists = Storage::disk('public')->exists("product/image/{$product->affiche}");
+                $exists = Storage::disk('public')->exists("annonce/image/{$product->affiche}");
                 if($exists){
-                    Storage::disk('public')->delete("product/image/{$product->affiche}");
+                    Storage::disk('public')->delete("annonce/image/{$product->affiche}");
                 }
             }
-
-            $imageName = Str::random().'.'.$request->affiche->getClientOriginalExtension();
-            Storage::disk('public')->putFileAs('product/image', $request->affiche,$imageName);
+            $image_file=$request->affiche;
+            $imageName = Str::random().'.'.$image_file->getClientOriginalName();
+            Storage::disk('public')->putFileAs('annonce/image', $image_file,$imageName);
             $annonce->affiche = $imageName;
             $annonce->save();
         }
@@ -155,9 +132,9 @@ return (new AnnonceResource($annonce))
             try {
     
                 if($annonce->affiche){
-                    $exists = Storage::disk('public')->exists("product/image/{$product->affiche}");
+                    $exists = Storage::disk('public')->exists("annonce/image/{$annonce->affiche}");
                     if($exists){
-                        Storage::disk('public')->delete("product/image/{$product->affiche}");
+                        Storage::disk('public')->delete("annonce/image/{$annonce->affiche}");
                     }
                 }
     

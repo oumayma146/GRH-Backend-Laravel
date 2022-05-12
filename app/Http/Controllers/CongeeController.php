@@ -48,6 +48,17 @@ class CongeeController extends Controller
         return response()->json(new CongeeResource($congee), 200);
     }
 
+// Generate PDF
+public function createPDF($congee_id) {
+    // retreive all records from db
+    $data = Congee::where('id', $congee_id)->get();
+    // share data to view
+    view()->share('congee',$data);
+    $pdf = PDF::loadView('pdfConge', $data);
+    // download PDF file with download method
+    $pdf->save(public_path('/files/test.pdf'));
+    //return $pdf->download('pdf_file.pdf');
+  }
 
     /**
      * Update the specified resource in storage.

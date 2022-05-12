@@ -41,7 +41,7 @@ class UsersController extends Controller
     }
     public function getemployee(Request $request)
     {
-        $user =  User::without(['prenom','email','adresse','statu','genre','password','user_info','contrat','competance','langues','posts','education','cartification'])
+        $user =  User::without(['prenom','email','adresse','statu','genre','password','user_info','contrat','competance','langues','posts','education','cartification','password'])
         ->whereHas('roles',function($q){
              $q->where('slug','employee'); })->get(array('id', 'name'));
         return response()->json([

@@ -57,6 +57,7 @@ class AuthController extends Controller
         }
         $userauth = auth()->user()->load('roles');
         return response()->json([
+         
             'token' => auth()->user()->createToken('munaf')->plainTextToken ,
             'role'=> $userauth->roles
      
