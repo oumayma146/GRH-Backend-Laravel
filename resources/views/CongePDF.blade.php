@@ -1,21 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Gestion des ressources humaines</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet" type="text/css" />
+    <?php
+   echo' <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">';
+ ?>
 </head>
+
 <body>
-    <div class="container mt-5">
+<?php
+
+   echo ' <div class="container mt-5">
         <h2 class="text-center mb-3">Demande de Congé</h2>
        
         <table class="table table-bordered mb-5">
             <thead>
                 <tr class="table-danger">
-                    <th scope="col">Nom d'employé</th>
+                    <th scope="col">Nom d\'employé</th>
                     <th scope="col">Date de debut</th>
                     <th scope="col">Date de fin</th>
                     <th scope="col">Nombre de Jour</th>
@@ -23,20 +26,21 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach($congee ?? '' as $data)
+                
                 <tr>
-                    <th scope="row">{{ $data->user_id }}</th>
-                    <td>{{ $data->debut }}</td>
-                    <td>{{ $data->fin }}</td>
-                    <td>{{ $data->nbJour }}</td>
-                    <td>{{ $data->typeCongee }}</td>
+                    <td scope="row">'.
+                     $congee->user->name. $congee->user->prenom.' </td>
+                    <td>'. $congee->debut.' </td>
+                    <td>'. $congee->fin.' </td>
+                    <td>'.$congee->nbJour.' </td>
+                    <td>'.$congee->typeCongee.' </td>
                 </tr>
-                @endforeach
             </tbody>
         </table>
         <h4>Signature RH</h4>
         
-    </div>
-    <script src="{{ asset('js/app.js') }}" type="text/js"></script>
+    </div>';
+    //echo '<script src="{{ asset('js/app.js') }}" type="text/js"></script>';
+?>
 </body>
 </html>

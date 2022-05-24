@@ -63,7 +63,7 @@ class User extends Authenticatable
 
     public function roles()
     {
-        return $this->belongsToMany('\App\Models\Role', 'model_has_roles', 'model_id', 'role_id')/* ->where('model_type','App\Models\User') */;
+        return $this->belongsToMany('\App\Models\Role', 'user_has_roles', 'user_id', 'role_id')/* ->where('model_type','App\Models\User') */;
     }
     public function posts(){
         return $this->hasMany(Post::class);

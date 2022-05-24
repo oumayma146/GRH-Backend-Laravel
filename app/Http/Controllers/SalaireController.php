@@ -51,6 +51,9 @@ class SalaireController extends Controller
             'Datedebut'=>$request->Datedebut,
             'ChargePaterneles'=>$request->ChargePaterneles,
             'SalaireBrut'=>$request->SalaireBrut,
+            'user_id'=>$request->user_id,
+
+
         ]);
         return response()->json([
             'status' => $updated

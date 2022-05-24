@@ -49,17 +49,23 @@ class CongeeController extends Controller
     }
 
 // Generate PDF
-public function createPDF($congee_id) {
-    // retreive all records from db
-    $data = Congee::where('id', $congee_id)->get();
-    // share data to view
-    view()->share('congee',$data);
-    $pdf = PDF::loadView('pdfConge', $data);
-    // download PDF file with download method
-    $pdf->save(public_path('/files/test.pdf'));
-    //return $pdf->download('pdf_file.pdf');
-  }
+public function generatePDF($congee_id) {
 
+ 
+    $doc = $this->pdf_congee($congee_id);
+    $doc = preg_replace('/>\s+</', "><",$doc);
+    $dompdf = \App::make('dompdf.wrapper');
+    $dompdf->loadHTML($doc,'UTF-8');
+    $dompdf->setPaper("portrait");
+    $pdf_name = 'DemandeCongee-'.$congee_id.'.pdf';
+   // return $dompdf->download($pdf_name);
+    return $dompdf->stream($pdf_name,array('Attachment'=>0));
+  }
+  public function pdf_congee($congee_id) {
+    $congee = Congee::where('id', $congee_id)->first(); 
+    $congee->load('user');
+    return \View::make('CongePDF',compact('congee'))->render();
+  }
     /**
      * Update the specified resource in storage.
      *
@@ -73,6 +79,7 @@ public function createPDF($congee_id) {
             'fin' => $request->fin,
             'nbJour' => $request->nbJour,
             'typeCongee' => $request->typeCongee,
+            'user_id'=>$request->user_id,
 
         ]);
         return response()->json([

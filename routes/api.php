@@ -13,7 +13,8 @@ use App\Http\Controllers\FormateurController;
 use App\Http\Controllers\CompetanceController;
 use App\Http\Controllers\LangueController;
 use App\Http\Controllers\PermissionController;
-use App\Http\Controllers\PDFController;
+use App\Http\Controllers\ChartController;
+
 
 
 
@@ -42,7 +43,7 @@ Route::group(['prefix' => 'users' ,'middleware'=>'auth:sanctum' ], function () {
     Route::get('/emp', [UsersController::class, 'getemployee']);
     Route::get('/employee/{id}', [UsersController::class, 'getEmployeeInfo']);
     Route::post('/create', [UsersController::class, 'create']);
-    Route::put('/{id}', [UsersController::class, 'update']);
+    Route::put('/update/{id}', [UsersController::class, 'update']);
     Route::delete('/{id}', [UsersController::class, 'destroy']);
 });
 Route::group(['prefix' => 'congee' ,'middleware'=>'auth:sanctum' ], function () {
@@ -54,8 +55,7 @@ Route::group(['prefix' => 'congee' ,'middleware'=>'auth:sanctum' ], function () 
 Route::group(['prefix' => 'ads' ,'middleware'=>'auth:sanctum' ], function () {
     Route::get('/', [AnnonceController::class, 'get']);
     Route::post('/store', [AnnonceController::class, 'store']);
-    Route::post('/create', [AnnonceController::class, 'create']);
-    Route::put('/update', [AnnonceController::class, 'update']);
+    Route::put('/update/{id}', [AnnonceController::class, 'update']);
     Route::delete('/{id}', [AnnonceController::class, 'destroy']);
 });
 
@@ -95,4 +95,8 @@ Route::group(['prefix' => 'permission' ,'middleware'=>'auth:sanctum' ], function
     Route::post('/create', [PermissionController::class, 'create']);
     Route::delete('/{id}', [PermissionController::class, 'destroy']);
 });
-Route::get('generate-pdf', [PDFController::class, 'generatePDF']);
+Route::group(['prefix' => 'chart' ,'middleware'=>'auth:sanctum' ], function () {
+    Route::get('/pie',       [ChartController::class, 'Piechart']);
+    Route::get('/donut', [ChartController::class, 'Donutchart']);
+ 
+});
