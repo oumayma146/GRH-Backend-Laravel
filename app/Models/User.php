@@ -63,7 +63,7 @@ class User extends Authenticatable
 
     public function roles()
     {
-        return $this->belongsToMany('\App\Models\Role', 'user_has_roles', 'user_id', 'role_id')/* ->where('model_type','App\Models\User') */;
+        return $this->belongsToMany('\App\Models\Role', 'user_has_roles', 'user_id', 'role_id')/* ->where('model_type','App\Models\User') */ ;
     }
     public function posts(){
         return $this->hasMany(Post::class);
@@ -82,10 +82,10 @@ class User extends Authenticatable
     }
 
     public function competance(){
-        return $this->hasMany(Competance::class);
+        return $this->belongsToMany('\App\Models\Competance', 'user_has_competance', 'user_id', 'competance_id');
     }
     public function langues(){
-        return $this->hasMany(Langues::class);
+        return $this->belongsToMany('\App\Models\Langues', 'user_has_langue', 'user_id', 'langue_id');
     }
     public function salaire(){
         return $this->hasMany(Salaire::class);

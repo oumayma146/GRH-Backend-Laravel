@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
 use Validator;
+use Illuminate\Support\Facades\File;
 
 class AnnonceController extends Controller
 {
@@ -40,7 +41,7 @@ class AnnonceController extends Controller
 
         try{
             $imageName =Str::random().'.'.$request->affiche->getClientOriginalExtension();
-            Storage::disk('public')->putFileAs('annonce/image/', $request->affiche,$imageName);
+            Storage::disk('public')->putFileAs('', $request->affiche,$imageName);
                 $annonce= Annonce::create([
                     'titre' => $request->titre,
                     'resume' => $request->resume,
@@ -77,45 +78,35 @@ class AnnonceController extends Controller
      */
     public function update(Request $request , $annonce_id)
     {
-        $annonce = Annonce::where('id', $annonce_id)->update([
-            'titre' => $request->titre,
-            'resume' => $request->resume,
-            'date' => $request->date,
-       
-        ]);
-
-  //try{
-
+        $annonce=Annonce::findOrFail($annonce_id);
+        
+        $destination=public_path("public".$annonce->affiche);
+        $filename="";
         if($request->hasFile('affiche')){
-
-            // remove old image
-            if($annonce->affiche){
-                $exists = Storage::disk('public')->exists("annonce/image/{$annonce->affiche}");
-                if($exists){
-                    Storage::disk('public')->delete("annonce/image/{$annonce->affiche}");
-                }
+            if(File::exists($destination)){
+                File::delete($destination);
             }
-          
-            $imageName =Str::random().'.'.$request->affiche->getClientOriginalExtension();
-            Storage::disk('public')->putFileAs('annonce/image/', $request->affiche,$imageName);
-            $annonce->affiche = $imageName;
-            $annonce->save();
+
+            $filename=$request->file('affiche')->store('','public');
+        }else{
+            $filename=$request->affiche;
+        }
+        $typeAnnonce = $request->get('typeAnnonce');
+
+       
+        $annonce->typeAnnonce()->sync($typeAnnonce);
+      
+        $annonce->titre=$request->titre;
+        $annonce->resume=$request->resume;
+        $annonce->date=$request->date;
+        $annonce->affiche=$filename;
+        $result=$annonce->save();
+        if($result){
+            return response()->json(['success'=>true]);
+        }else{
+            return response()->json(['success'=>false]);
         }
 
-  $annonce = Annonce::find($annonce_id);
-  $ids = $request->typeAnnonce ;
-  $annonce->typeAnnonce()->sync($ids);
-  
-        return response()->json([
-            'message'=>'annonce Updated Successfully!!'
-        ]);
-
-  /* }catch(\Exception $e){
-        \Log::error($e->getMessage());
-        return response()->json([
-            'message'=>'Something goes wrong while updating a annonce!!'
-        ],500);
-    }  */
 }
 
     /**
@@ -126,12 +117,24 @@ class AnnonceController extends Controller
      */
     public function destroy($annonce_id)
     {
-        $deleted =  Annonce::find($annonce_id);
+        $annonce=Annonce::findOrFail($annonce_id);
+        $destination=public_path("public".$annonce->affiche);
+        if(File::exists($destination)){
+            File::delete($destination);
+        }
+        $result=$annonce->delete();
+        if($result){
+            return response()->json(['success'=>true]);
+        }else{
+            return response()->json(['success'=>false]);
+        }
+    }
+      /*   $deleted =  Annonce::find($annonce_id);
         $deleted->delete();
         return response()->json([
             'status' => $deleted ? 'success' : 'failed'
         ], 200);
        
-    }
+    } */
    
 }
