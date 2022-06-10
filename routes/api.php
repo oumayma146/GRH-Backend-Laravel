@@ -14,9 +14,12 @@ use App\Http\Controllers\CompetanceController;
 use App\Http\Controllers\LangueController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ChartController;
+use App\Http\Controllers\ForgotPasswordController;
 
 
 
+Route::post('password/email', [ForgotPasswordController::class, 'forgot']);
+Route::post('password/reset', [ForgotPasswordController::class, 'reset']);
 
 Route::post('/sign-in', [AuthController::class, 'signIn']);
 Route::get('/profile', [AuthController::class, 'profile']);

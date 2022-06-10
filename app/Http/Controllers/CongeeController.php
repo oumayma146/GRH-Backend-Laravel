@@ -82,9 +82,9 @@ public function generatePDF($congee_id) {
             'user_id'=>$request->user_id,
 
         ]);
-        return response()->json([
-            'status' => $updated
-        ], 200);
+
+            return response()->json(['success'=>true],200);
+        
     }
 
     /**

@@ -50,9 +50,9 @@ class LangueController extends Controller
      * @param  \App\Models\Annonce  $annonce
      * @return \Illuminate\Http\Response
      */
-    public function destroy($annonce_id)
+    public function destroy($langue_id)
     {
-        $deleted =  Annonce::where('id', $annonce_id)->delete();
+        $deleted =  Langues::where('id', $langue_id)->delete();
         return response()->json([
             'status' => $deleted ? 'success' : 'failed'
         ], 200);

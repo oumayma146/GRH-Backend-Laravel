@@ -162,12 +162,15 @@ class UsersController extends Controller
         $competance_ids = $postedata['competance_ids'];
 
         $user_info_id =  $user_info['id'];
+        $contart_id =  $contrat['id'];
 
         $old_user=User::findOrFail($id) ;
         $old_user_info=User_info::findOrFail($user_info_id) ;
-         
+        $old_contrat= Contrat::findOrFail($contart_id) ;
+
         $old_user->update($user);
         $old_user_info->update($user_info);
+        $old_contrat->update($contrat);
 
         foreach($cartification as $certif){
             $id_certif = $certif['id'];
@@ -178,13 +181,9 @@ class UsersController extends Controller
         foreach($education as $educ){
             $id_educ = $educ['id'];
             $old_educ =Education::findOrFail($id_educ) ;
-            $old_educ->update($educ);
+            $old_educ->updateOrCreate($educ);
         }
-       /* foreach($contrat as $cont){
-            $id_cont = $cont['id'];
-            $old_contrat =Contrat::findOrFail($id_cont) ;
-            $old_contrat->update($cont);
-        }  */
+   
         foreach($posts as $post){
             $id_post = $post['id'];
             $old_post =Post::findOrFail($id_post) ;
@@ -193,11 +192,8 @@ class UsersController extends Controller
 
         $newuser = User::findOrFail($id) ; 
         $newuser->roles()->sync($role_id);
-        $newuser->langues()->sync($langue_ids);
+        $newuser->langues()->sync($langue_ids) ;                                                                                                                                                                    
         $newuser->competance()->sync($competance_ids); 
-
-
-
         if($old_user){
             return response()->json(['success'=>true]);
         }else{
