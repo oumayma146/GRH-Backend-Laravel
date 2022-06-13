@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
+use Spatie\Permission\Models\Role;
 use DB;
 use Carbon\Carbon;
 use Mail;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Password;
-use App\User;
+use App\Models\User;
+use Illuminate\Support\Facades\Validator;
 
 class ForgotPasswordController extends Controller
 {
@@ -43,64 +45,25 @@ class ForgotPasswordController extends Controller
 
 
 
-   public function reset(Request $request) {
+   public function reset(Request $request) 
+   {
        
-    $credentials =request()->validate( [
-          
+    $Validation = Validator::make($request->all(),[
         'email' => 'required|email',
-          'password' => 'min:6|required_with:password_confirmation',
-        'password_confirmation' => 'min:6',
+        'password' => 'min:6|confirmed',
         'token' => 'required|string'
-        ]);
+    ]);
+    if($Validation->fails())
+        return response($Validation->errors());
     
-     //dd($credentials);
-  
-    $credentials['password'] = Hash::make($request->password);
-    $credentials['password_confirmation'] = Hash::make($request->password_confirmation);
+    $updated = User::where('email',request('email'))->update(['password'=> Hash::make($request->password)]);
+    
 
-    // dd($credentials);
-     
-    $reset_password_status = Password::reset($credentials, function($user, $password) {
-       
-    
-        $user->password = $password;
-        
-        $user->save();
-
-    });
-    // dd($reset_password_status);
-  
-    
-    if ($reset_password_status == Password::INVALID_TOKEN) {
+    if (!$updated) {
         return response()->json(["msg" => "Invalid token provided",'status'=>'404','data'=>'']);
     }
 
-    return response()->json(["msg" => "Password has been successfully changed",'status'=>'200','data'=>'']);
-}
-      
-   /*  $request->validate([
-        'email' => 'required|email|exists:users',
-        'password' => 'required|string|min:6|confirmed',
-        'password_confirmation' => 'required',
-
-    ]);
-
-    $updatePassword = DB::table('password_resets')
-                        ->where(['email' => $request->email, 'token' => $request->token])
-                        ->first();
-
-    if(!$updatePassword)
-        return back()->withInput()->with('error', 'Invalid token!');
-
-      $user = User::where('email', $request->email)
-                  ->update(['password' => Hash::make($request->password)]);
-
-      DB::table('password_resets')->where(['email'=> $request->email])->delete();
-
-        // dd($reset_password_status);
-
-        return response()->json(["msg" => "Password has been successfully changed",'status'=>'200','data'=>'']);
+    return redirect()->away('http://localhost:3000/login');
     }
- */
 
 }

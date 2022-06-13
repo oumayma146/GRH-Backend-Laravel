@@ -39,6 +39,8 @@ Route::group(['prefix' => 'role', 'middleware'=>'auth:sanctum'], function () {
     Route::get('/idRole/{id}', [RolesController::class, 'getRolePermission']);
     Route::put('/update/{id}', [RolesController::class, 'update']);
     Route::delete('/{id}', [RolesController::class, 'destroy']);
+    Route::get('/name', [RolesController::class, 'normalRoles']);
+
 });
 Route::group(['prefix' => 'users' ,'middleware'=>'auth:sanctum' ], function () {
     Route::get('/', [UsersController::class, 'get']);

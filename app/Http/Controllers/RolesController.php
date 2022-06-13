@@ -26,7 +26,9 @@ class RolesController extends Controller
     {
 
     }
-    
+    public function normalRoles(){
+        return response(Role::where('slug','!=','admin')->get());
+    }
     /**
      * Display a listing of the resource.
      *

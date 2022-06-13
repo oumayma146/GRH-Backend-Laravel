@@ -14,6 +14,7 @@ use App\Models\Cartification;
 use App\Models\Post;
 use App\Models\Competance;
 use App\Models\Role;
+use Illuminate\Support\Facades\Validator;
 use Spatie\Permission\Models\Permission;
 
 class UsersController extends Controller
@@ -147,61 +148,51 @@ class UsersController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request ,$id)
-    {     
+    {    
+        /*
+        ** this is how to validate payloads before you work with them 
         
-        $postedata = $request->all();
-        $user = $postedata['user'];
-        $user_info = $postedata['user_info'];
-        $contrat = $postedata['contrat'];
-    
-        $cartification = $postedata['cartification'];
-        $education = $postedata['education'];
-        $posts = $postedata['posts'];
-        $role_id = $postedata['role_id'];
-        $langue_ids = $postedata['langue_ids'];
-        $competance_ids = $postedata['competance_ids'];
+            $Validation = Validator::make($request->all(),[
+                'xyz' =>['required','string','max:500']
+            ]);
+            if($Validation->fails())
+                return response($Validation->errors());
+        */  
+        $old_user=User::find($id);
+        // making sure that the user exists before doing any work
+        if(!$old_user)
+            return response(['success'=>false,'message'=>'user not found'],404);
+        // i guess the test here of the findorfail is pointless since a use is sure to have user_info and a Contract
+        $old_user_info=User_info::findOrFail(request('user_info')['id']);
+        $old_contrat= Contrat::findOrFail(request('contrat')['id']);
+        // starting the update process
+        $old_user->update(request('user'));
+        $old_user_info->update(request('user_info'));
+        $old_contrat->update(request('contrat'));
+        $old_user->roles()->sync(request('role_id'));
+        $old_user->langues()->sync(request('langue_ids'));
+        $old_user->competance()->sync(request('competance_ids'));
 
-        $user_info_id =  $user_info['id'];
-        $contart_id =  $contrat['id'];
-
-        $old_user=User::findOrFail($id) ;
-        $old_user_info=User_info::findOrFail($user_info_id) ;
-        $old_contrat= Contrat::findOrFail($contart_id) ;
-
-        $old_user->update($user);
-        $old_user_info->update($user_info);
-        $old_contrat->update($contrat);
-
-        foreach($cartification as $certif){
-            $id_certif = $certif['id'];
-            $old_certif =Cartification::findOrFail($id_certif) ;
-            $old_certif->update($certif);
+        foreach(request('cartification') as $certif){
+            if(!array_key_exists('id',$certif))
+                Cartification::create(array_merge($certif,['user_id'=> $id]));
+            else
+                Cartification::where('id',$certif['id'])->update($certif);
         }
-
-        foreach($education as $educ){
-            $id_educ = $educ['id'];
-            $old_educ =Education::findOrFail($id_educ) ;
-            $old_educ->updateOrCreate($educ);
+        foreach(request('education') as $educ){
+            if(!array_key_exists('id',$educ))
+                Education::create(array_merge($educ,['user_id'=> $id]));
+            else
+                Education::where('id',$educ['id'])->update($educ);
         }
-   
-        foreach($posts as $post){
-            $id_post = $post['id'];
-            $old_post =Post::findOrFail($id_post) ;
-            $old_post->update($post);
+        foreach(request('posts') as $post){
+            if(!array_key_exists('id',$post))
+                Post::create(array_merge($post,['user_id'=> $id]));
+            else
+                Post::where('id',$post['id'])->update($post);
         }
-
-        $newuser = User::findOrFail($id) ; 
-        $newuser->roles()->sync($role_id);
-        $newuser->langues()->sync($langue_ids) ;                                                                                                                                                                    
-        $newuser->competance()->sync($competance_ids); 
-        if($old_user){
-            return response()->json(['success'=>true]);
-        }else{
-            return response()->json(['success'=>false]);
-        }
-
-        
-     
+        // this will be reached only if everything went according to plan
+        return response(['success'=>true,'message'=>'user updated successfully!']); 
     }
 
     /**
