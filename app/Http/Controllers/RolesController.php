@@ -123,7 +123,8 @@ class RolesController extends Controller
         
         $role = Role::findOrFail($role_id);
         $data = ['name' => $request->get('name')];
-        $permissions = $request->get('permission');
+        
+        $permissions = json_decode($request->get('permission'),true);
         $role->update($data);
         $role->permissions()->detach();
 
@@ -131,9 +132,8 @@ class RolesController extends Controller
           $role->permissions()->attach([$perm_id]);
   
      
-          return (new RolesResource($role))
-               ->response()
-               ->setStatusCode(Response::HTTP_CREATED);
+          return response()->json([new RolesResource($role)]);
+              
     }
 
     /**

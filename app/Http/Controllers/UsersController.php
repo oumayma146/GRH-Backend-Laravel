@@ -16,7 +16,9 @@ use App\Models\Competance;
 use App\Models\Role;
 use Illuminate\Support\Facades\Validator;
 use Spatie\Permission\Models\Permission;
-
+use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Controllers\Controller;
 class UsersController extends Controller
 {
       /**
@@ -35,7 +37,7 @@ class UsersController extends Controller
 
     public function get_employees(Request $request)
     {
-        $users = User::whereHas('roles',function($q){ $q->where('slug','employee'); })->get();
+        $users = User::whereHas('roles',function($q){ $q->where('slug','!=','admin'); })->get();
         return response()->json([
             'users' => $users
         ], 200); 
@@ -44,7 +46,7 @@ class UsersController extends Controller
     {
         $user =  User::without(['prenom','email','adresse','statu','genre','password','user_info','contrat','competance','langues','posts','education','cartification','password'])
         ->whereHas('roles',function($q){
-             $q->where('slug','employee'); })->get(array('id', 'name'));
+             $q->where('slug','!=','admin'); })->get(array('id', 'name'));
         return response()->json([
         'user'=>$user,
         
@@ -149,15 +151,7 @@ class UsersController extends Controller
      */
     public function update(Request $request ,$id)
     {    
-        /*
-        ** this is how to validate payloads before you work with them 
-        
-            $Validation = Validator::make($request->all(),[
-                'xyz' =>['required','string','max:500']
-            ]);
-            if($Validation->fails())
-                return response($Validation->errors());
-        */  
+      
         $old_user=User::find($id);
         // making sure that the user exists before doing any work
         if(!$old_user)
@@ -192,15 +186,10 @@ class UsersController extends Controller
                 Post::where('id',$post['id'])->update($post);
         }
         // this will be reached only if everything went according to plan
-        return response(['success'=>true,'message'=>'user updated successfully!']); 
+        return response(['message'=>'user updated successfully!']); 
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\User $user
-     * @return \Illuminate\Http\Response
-     */
+   
     public function destroy($user_id)
     {
  
