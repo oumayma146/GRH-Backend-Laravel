@@ -39,12 +39,5 @@ class ChartController extends Controller
            $cash_count,
            $Bank_cards_count,
            ], 200); 
-           /* $formation = Formation::select('date', \DB::raw("COUNT('id') as count"))
-           ->groupBy('date')
-           ->get();
-           return response()->json([
-            'date' => $formation ,
-           
-           ], 200);  */
-    }
+        }
 }
