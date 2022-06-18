@@ -1,4 +1,4 @@
-# Laravel Granular Permissions Backend
+# GRH-Backend-Laravel
 
 ## Getting Started
 
@@ -22,10 +22,4 @@ php artisan migrate --seed
 php artisan server
 ```
 
-## Postman API collection
 
-https://www.getpostman.com/collections/ed63bd92111a171a6557
-
-## Author
-
-[Munaf A. Mahdi](https://github.com/munafio)
